@@ -46,6 +46,6 @@
         <PackageReference Include="SendGrid" Version="9.29.2" />
         <PackageReference Include="Soenneker.Extensions.Configuration" Version="2.1.203" />
         <PackageReference Include="Soenneker.Utils.AsyncSingleton" Version="2.1.181" />
-        <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="2.1.285" />
+        <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="2.1.286" />
     </ItemGroup>
 </Project>
