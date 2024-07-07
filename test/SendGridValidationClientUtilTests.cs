@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Soenneker.SendGrid.Client.Validation.Abstract;
 using Soenneker.Tests.FixturedUnit;
 using Xunit;
