@@ -1,5 +1,6 @@
 using SendGrid;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Soenneker.SendGrid.Client.Validation.Abstract;
@@ -9,5 +10,5 @@ namespace Soenneker.SendGrid.Client.Validation.Abstract;
 /// </summary>
 public interface ISendGridValidationClientUtil : IDisposable, IAsyncDisposable
 {
-    ValueTask<SendGridClient> Get();
+    ValueTask<SendGridClient> Get(CancellationToken cancellationToken = default);
 }
