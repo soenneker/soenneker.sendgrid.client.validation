@@ -15,7 +15,6 @@ public static class SendGridValidationClientUtilRegistrar
     /// </summary>
     public static void AddSendGridValidationClientUtilAsSingleton(this IServiceCollection services)
     {
-        services.AddHttpClientCache();
         services.TryAddSingleton<ISendGridValidationClientUtil, SendGridValidationClientUtil>();
     }
 
@@ -24,7 +23,6 @@ public static class SendGridValidationClientUtilRegistrar
     /// </summary>
     public static void AddSendGridValidationClientUtilAsScoped(this IServiceCollection services)
     {
-        services.AddHttpClientCache();
         services.TryAddScoped<ISendGridValidationClientUtil, SendGridValidationClientUtil>();
     }
 }
