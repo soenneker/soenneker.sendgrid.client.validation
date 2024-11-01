@@ -1,50 +1,51 @@
 using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using SendGrid;
 using Soenneker.Extensions.Configuration;
 using Soenneker.SendGrid.Client.Validation.Abstract;
-using Soenneker.Utils.AsyncSingleton;
+using Soenneker.Utils.HttpClientCache.Abstract;
+using Soenneker.Utils.HttpClientCache.Dtos;
 
 namespace Soenneker.SendGrid.Client.Validation;
 
 /// <inheritdoc cref="ISendGridValidationClientUtil"/>
 public class SendGridValidationClientUtil : ISendGridValidationClientUtil
 {
-    private readonly AsyncSingleton<SendGridClient> _client;
+    private readonly IHttpClientCache _httpClientCache;
 
-    public SendGridValidationClientUtil(IConfiguration config, ILogger<SendGridValidationClientUtil> logger)
+    private readonly HttpClientOptions _options;
+
+    public SendGridValidationClientUtil(IConfiguration configuration, IHttpClientCache httpClientCache)
     {
-        _client = new AsyncSingleton<SendGridClient>(() =>
+        _httpClientCache = httpClientCache;
+
+        var apiKey = configuration.GetValueStrict<string>("SendGrid:ValidationApiKey");
+
+        _options = new HttpClientOptions
         {
-            var apiKey = config.GetValueStrict<string>("SendGrid:ValidationApiKey");
-
-            logger.LogDebug("Connecting SendGrid validation client...");
-
-            var client = new SendGridClient(apiKey);
-
-            return client;
-        });
+            BaseAddress = "https://api.sendgrid.com/",
+            DefaultRequestHeaders = new System.Collections.Generic.Dictionary<string, string> {{"Authentication", $"bearer {apiKey}"}}
+        };
     }
 
-    public ValueTask<SendGridClient> Get(CancellationToken cancellationToken = default)
+    public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _client.Get(cancellationToken);
+        return _httpClientCache.Get(nameof(SendGridValidationClientUtil), _options, cancellationToken: cancellationToken);
     }
 
     public void Dispose()
     {
         GC.SuppressFinalize(this);
 
-        _client.Dispose();
+        _httpClientCache.RemoveSync(nameof(SendGridValidationClientUtil));
     }
 
     public ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
 
-        return _client.DisposeAsync();
+        return _httpClientCache.Remove(nameof(SendGridValidationClientUtil));
     }
 }
