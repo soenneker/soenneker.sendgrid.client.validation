@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Soenneker.SendGrid.Client.Validation.Abstract;
-using Soenneker.Utils.HttpClientCache.Registrar;
 
 namespace Soenneker.SendGrid.Client.Validation.Registrars;
 
