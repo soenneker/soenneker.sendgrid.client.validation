@@ -2,8 +2,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Soenneker.Fixtures.Unit;
-using Soenneker.SendGrid.Client.Validation.Registrars;
 using Soenneker.Utils.Test;
+using Soenneker.SendGrid.Client.Validation.Registrars;
 
 namespace Soenneker.SendGrid.Client.Validation.Tests;
 
@@ -26,6 +26,6 @@ public class Fixture : UnitFixture
         IConfiguration config = TestUtil.BuildConfig();
         services.AddSingleton(config);
 
-        services.AddSendGridValidationClientUtilAsSingleton();
+        services.AddSendGridValidationClientUtilAsScoped();
     }
 }
