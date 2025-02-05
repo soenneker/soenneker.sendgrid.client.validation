@@ -13,18 +13,22 @@ public static class SendGridValidationClientUtilRegistrar
     /// <summary>
     /// Adds <see cref="ISendGridValidationClientUtil"/> as a singleton service. <para/>
     /// </summary>
-    public static void AddSendGridValidationClientUtilAsSingleton(this IServiceCollection services)
+    public static IServiceCollection AddSendGridValidationClientUtilAsSingleton(this IServiceCollection services)
     {
-        services.AddHttpClientCache();
-        services.TryAddSingleton<ISendGridValidationClientUtil, SendGridValidationClientUtil>();
+        services.AddHttpClientCacheAsSingleton()
+                .TryAddSingleton<ISendGridValidationClientUtil, SendGridValidationClientUtil>();
+
+        return services;
     }
 
     /// <summary>
     /// Adds <see cref="ISendGridValidationClientUtil"/> as a scoped service. <para/>
     /// </summary>
-    public static void AddSendGridValidationClientUtilAsScoped(this IServiceCollection services)
+    public static IServiceCollection AddSendGridValidationClientUtilAsScoped(this IServiceCollection services)
     {
-        services.AddHttpClientCache();
-        services.TryAddScoped<ISendGridValidationClientUtil, SendGridValidationClientUtil>();
+        services.AddHttpClientCacheAsSingleton()
+                .TryAddScoped<ISendGridValidationClientUtil, SendGridValidationClientUtil>();
+
+        return services;
     }
 }
