@@ -1,4 +1,4 @@
-# Contributing to Soenneker.SendGrid.Client.Validation
+﻿# Contributing to Soenneker.SendGrid.Client.Validation
 
 We're excited that you're interested in contributing!
 
