@@ -3,10 +3,10 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Soenneker.Dtos.HttpClientOptions;
 using Soenneker.Extensions.Configuration;
 using Soenneker.SendGrid.Client.Validation.Abstract;
 using Soenneker.Utils.HttpClientCache.Abstract;
-using Soenneker.Utils.HttpClientCache.Dtos;
 
 namespace Soenneker.SendGrid.Client.Validation;
 
@@ -14,38 +14,43 @@ namespace Soenneker.SendGrid.Client.Validation;
 public class SendGridValidationClientUtil : ISendGridValidationClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
+    private readonly IConfiguration _configuration;
 
-    private readonly HttpClientOptions _options;
+    private const string _clientId = nameof(SendGridValidationClientUtil);
+    private const string _baseUrl = "https://api.sendgrid.com/";
 
     public SendGridValidationClientUtil(IConfiguration configuration, IHttpClientCache httpClientCache)
     {
         _httpClientCache = httpClientCache;
-
-        var apiKey = configuration.GetValueStrict<string>("SendGrid:ValidationApiKey");
-
-        _options = new HttpClientOptions
-        {
-            BaseAddress = "https://api.sendgrid.com/",
-            DefaultRequestHeaders = new System.Collections.Generic.Dictionary<string, string> {{"Authentication", $"bearer {apiKey}"}}
-        };
+        _configuration = configuration;
     }
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(nameof(SendGridValidationClientUtil), _options, cancellationToken: cancellationToken);
+        return _httpClientCache.Get(_clientId, () =>
+        {
+            var apiKey = _configuration.GetValueStrict<string>("SendGrid:ValidationApiKey");
+
+            return new HttpClientOptions
+            {
+                BaseAddress = _baseUrl,
+                DefaultRequestHeaders = new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "Authorization", $"Bearer {apiKey}" }
+                }
+            };
+        }, cancellationToken);
     }
 
     public void Dispose()
     {
         GC.SuppressFinalize(this);
-
-        _httpClientCache.RemoveSync(nameof(SendGridValidationClientUtil));
+        _httpClientCache.RemoveSync(_clientId);
     }
 
     public ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
-
-        return _httpClientCache.Remove(nameof(SendGridValidationClientUtil));
+        return _httpClientCache.Remove(_clientId);
     }
 }
