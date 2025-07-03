@@ -11,7 +11,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 namespace Soenneker.SendGrid.Client.Validation;
 
 /// <inheritdoc cref="ISendGridValidationClientUtil"/>
-public class SendGridValidationClientUtil : ISendGridValidationClientUtil
+public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _configuration;
@@ -44,13 +44,11 @@ public class SendGridValidationClientUtil : ISendGridValidationClientUtil
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
         _httpClientCache.RemoveSync(_clientId);
     }
 
     public ValueTask DisposeAsync()
     {
-        GC.SuppressFinalize(this);
         return _httpClientCache.Remove(_clientId);
     }
 }
