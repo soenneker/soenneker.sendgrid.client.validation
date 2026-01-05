@@ -17,7 +17,7 @@ public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
     private readonly IConfiguration _configuration;
 
     private const string _clientId = nameof(SendGridValidationClientUtil);
-    private const string _baseUrl = "https://api.sendgrid.com/";
+    private static readonly Uri _baseUrl = new Uri("https://api.sendgrid.com/");
 
     public SendGridValidationClientUtil(IConfiguration configuration, IHttpClientCache httpClientCache)
     {
@@ -27,13 +27,14 @@ public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(_clientId, () =>
+        // No closure: state passed explicitly + static lambda
+        return _httpClientCache.Get(_clientId, (configuration: _configuration, baseUrl: _baseUrl), static state =>
         {
-            var apiKey = _configuration.GetValueStrict<string>("SendGrid:ValidationApiKey");
+            var apiKey = state.configuration.GetValueStrict<string>("SendGrid:ValidationApiKey");
 
             return new HttpClientOptions
             {
-                BaseAddress = _baseUrl,
+                BaseAddress = state.baseUrl,
                 DefaultRequestHeaders = new System.Collections.Generic.Dictionary<string, string>
                 {
                     { "Authorization", $"Bearer {apiKey}" }
