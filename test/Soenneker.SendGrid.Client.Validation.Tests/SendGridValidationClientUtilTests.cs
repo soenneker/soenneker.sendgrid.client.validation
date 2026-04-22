@@ -1,20 +1,19 @@
 using Soenneker.SendGrid.Client.Validation.Abstract;
-using Soenneker.Tests.FixturedUnit;
-using Xunit;
+using Soenneker.Tests.HostedUnit;
 
 namespace Soenneker.SendGrid.Client.Validation.Tests;
 
-[Collection("Collection")]
-public class SendGridValidationClientUtilTests : FixturedUnitTest
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
+public class SendGridValidationClientUtilTests : HostedUnitTest
 {
     private readonly ISendGridValidationClientUtil _util;
 
-    public SendGridValidationClientUtilTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public SendGridValidationClientUtilTests(Host host) : base(host)
     {
         _util = Resolve<ISendGridValidationClientUtil>(true);
     }
 
-    [Fact]
+    [Test]
     public void Default()
     {
 
