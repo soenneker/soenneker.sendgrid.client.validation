@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Description>An async thread-safe singleton for a SendGrid validation client</Description>
+        <Description>Provides an authenticated HTTP client for SendGrid Email Address Validation.</Description>
         <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.SendGrid.Client.Validation</AssemblyName>

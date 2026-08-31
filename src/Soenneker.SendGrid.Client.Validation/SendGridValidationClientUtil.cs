@@ -10,14 +10,14 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.SendGrid.Client.Validation;
 
-/// <inheritdoc cref="ISendGridValidationClientUtil"/>
 public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _configuration;
 
-    private const string _clientId = nameof(SendGridValidationClientUtil);
-    private static readonly Uri _baseUrl = new Uri("https://api.sendgrid.com/");
+    private readonly string _cacheKey = $"{nameof(SendGridValidationClientUtil)}:{Guid.NewGuid():N}";
+
+    private const string _baseUrl = "https://api.sendgrid.com/";
 
     public SendGridValidationClientUtil(IConfiguration configuration, IHttpClientCache httpClientCache)
     {
@@ -27,14 +27,13 @@ public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        // No closure: state passed explicitly + static lambda
-        return _httpClientCache.Get(_clientId, (configuration: _configuration, baseUrl: _baseUrl), static state =>
+        return _httpClientCache.Get(_cacheKey, (configuration: _configuration, baseUrl: _configuration["SendGrid:ValidationClientBaseUrl"] ?? _baseUrl), static state =>
         {
             var apiKey = state.configuration.GetValueStrict<string>("SendGrid:ValidationApiKey");
 
             return new HttpClientOptions
             {
-                BaseAddress = state.baseUrl,
+                BaseAddress = new Uri(state.baseUrl),
                 DefaultRequestHeaders = new System.Collections.Generic.Dictionary<string, string>
                 {
                     { "Authorization", $"Bearer {apiKey}" }
@@ -43,20 +42,13 @@ public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
         }, cancellationToken);
     }
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose()
     {
-        _httpClientCache.RemoveSync(_clientId);
+        _httpClientCache.RemoveSync(_cacheKey);
     }
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync()
     {
-        return _httpClientCache.Remove(_clientId);
+        return _httpClientCache.Remove(_cacheKey);
     }
 }

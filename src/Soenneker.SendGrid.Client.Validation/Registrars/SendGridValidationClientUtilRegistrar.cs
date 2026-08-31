@@ -6,7 +6,7 @@ using Soenneker.Utils.HttpClientCache.Registrar;
 namespace Soenneker.SendGrid.Client.Validation.Registrars;
 
 /// <summary>
-/// An async thread-safe singleton for a SendGrid validation client
+/// Registers the authenticated SendGrid Email Address Validation client.
 /// </summary>
 public static class SendGridValidationClientUtilRegistrar
 {
