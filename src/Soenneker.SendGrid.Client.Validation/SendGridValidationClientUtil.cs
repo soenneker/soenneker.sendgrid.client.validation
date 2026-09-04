@@ -10,6 +10,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.SendGrid.Client.Validation;
 
+/// <inheritdoc cref="ISendGridValidationClientUtil" />
 public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
