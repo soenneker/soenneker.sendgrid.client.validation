@@ -30,7 +30,7 @@ public sealed class SendGridValidationClientUtil : ISendGridValidationClientUtil
     {
         return _httpClientCache.Get(_cacheKey, (configuration: _configuration, baseUrl: _configuration["SendGrid:ValidationClientBaseUrl"] ?? _baseUrl), static state =>
         {
-            var apiKey = state.configuration.GetValueStrict<string>("SendGrid:ValidationApiKey");
+            var apiKey = state.configuration.GetStringStrict("SendGrid:ValidationApiKey");
 
             return new HttpClientOptions
             {
